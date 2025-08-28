@@ -2,20 +2,19 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import WhyTrendnoa from "./components/WhyTrendnoa";
 import FeaturedTrend from "./components/FeaturedTrend";
+import ClientLayout from "./components/ClientLayout";
 
 export default function Home() {
   return (
     <>
-      <header>
+      <ClientLayout>
         <NavBar />
-      </header>
-      <main>
-        <FeaturedTrend/>
+
+        <FeaturedTrend />
         <WhyTrendnoa />
-      </main>
-      <footer>
+
         <Footer />
-      </footer>
+      </ClientLayout>
     </>
   );
 }

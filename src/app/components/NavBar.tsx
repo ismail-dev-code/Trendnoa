@@ -1,200 +1,108 @@
-"use client";
-
-import React, { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
-import {
-  Home,
-  Box,
-  PlusCircle,
-  LogOut,
-  Menu,
-  X,
-  ShoppingBag,
-} from "lucide-react";
+import { LogOut, ShoppingCart, Trash } from "lucide-react";
+import { useCart } from "@/context/CartContext"; 
+import { useState } from "react";
 import LoginButton from "./LoginButton";
-
-interface NavLink {
-  href: string;
-  label: string;
-  icon: React.ReactNode;
-}
-
-const publicLinks: NavLink[] = [
-  { href: "/", label: "Home", icon: <Home size={18} /> },
-  { href: "/products", label: "Products", icon: <Box size={18} /> },
-];
+import { signOut } from "next-auth/react";
 
 const Navbar: React.FC = () => {
-  const { data: session } = useSession({
-    required: false,
-    refetchInterval: 5,
-  });
-  const pathname = usePathname() || "/";
-  const [open, setOpen] = useState<boolean>(false);
-
-  const isActive = (href: string): boolean =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
-
-  const dashboardLinks: NavLink[] = session
-    ? [
-        {
-          href: "/dashboard/",
-          label: "Dashboard",
-          icon: <PlusCircle size={18} />,
-        },
-      ]
-    : [];
+  const { cart, totalItems, totalPrice, removeFromCart, clearCart } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full">
       <nav className="bg-slate-900 text-slate-300 shadow-md border-b border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Brand */}
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-2xl font-extrabold select-none"
-            >
-              <ShoppingBag size={24} className="text-amber-400" />
-              <span>
-                <span className="text-sky-300">Trend</span>
-                <span className="text-amber-400">Noa</span>
-              </span>
-            </Link>
+            
+            {/* ... Brand + Links ... */}
 
-            {/* Desktop links */}
-            <div className="hidden md:flex md:items-center md:space-x-6">
-              <div className="flex items-center space-x-1">
-                {publicLinks.map(({ href, label, icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      isActive(href)
-                        ? "bg-slate-800 text-white"
-                        : "hover:text-amber-400"
-                    }`}
-                  >
-                    {icon}
-                    {label}
-                  </Link>
-                ))}
+            <div className="flex items-center space-x-4">
+              {/* Cart Icon */}
+              <div className="relative">
+                <button
+                  onClick={() => setCartOpen((v) => !v)}
+                  className="relative p-2 rounded-md hover:bg-slate-800"
+                >
+                  <ShoppingCart size={20} />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs rounded-full px-1">
+                      {totalItems}
+                    </span>
+                  )}
+                </button>
+
+                {/* Cart Dropdown */}
+                {cartOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-white text-slate-800 rounded-lg shadow-lg border p-3 z-50">
+                    {cart.length === 0 ? (
+                      <p className="text-sm text-gray-600">Your cart is empty.</p>
+                    ) : (
+                      <div className="space-y-3">
+                        {cart.map((item) => (
+                          <div
+                            key={item.id}
+                            className="flex items-center justify-between border-b pb-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={item.imageUrl}
+                                alt={item.name}
+                                className="w-10 h-10 object-cover rounded"
+                              />
+                              <div>
+                                <p className="text-sm font-semibold">{item.name}</p>
+                                <p className="text-xs text-gray-500">
+                                  {item.quantity} ×{" "}
+                                  {item.discountPrice || item.price}৳
+                                </p>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => removeFromCart(item.id)}
+                              className="text-red-500 hover:text-red-700"
+                            >
+                              <Trash size={16} />
+                            </button>
+                          </div>
+                        ))}
+
+                        <div className="flex justify-between font-bold">
+                          <span>Total:</span>
+                          <span>{totalPrice}৳</span>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={clearCart}
+                            className="w-1/2 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded text-sm"
+                          >
+                            Clear
+                          </button>
+                          <button className="w-1/2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-1 rounded text-sm">
+                            Checkout
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Dashboard Links */}
-              {dashboardLinks.length > 0 && (
-                <div className="flex items-center space-x-1">
-                  {dashboardLinks.map(({ href, label, icon }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        isActive(href)
-                          ? "bg-slate-800 text-white"
-                          : "hover:text-amber-400"
-                      }`}
-                    >
-                      {icon}
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Auth buttons */}
-            <div className="hidden md:flex items-center space-x-3">
+              {/* Auth buttons */}
               {session ? (
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
-                  className="flex items-center gap-2 px-3 py-2 rounded-md bg-red-500 hover:bg-red-600 cursor-pointer text-white text-sm font-medium"
+                  className="flex items-center gap-2 px-3 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm font-medium"
                 >
-                  <LogOut size={16} />
-                  Logout
+                  <LogOut size={16} /> Logout
                 </button>
               ) : (
                 <LoginButton />
               )}
             </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden flex items-center">
-              <button
-                onClick={() => setOpen((v) => !v)}
-                aria-expanded={open}
-                aria-label="Toggle menu"
-                className="p-2 rounded-md hover:bg-slate-800 text-slate-300"
-              >
-                {open ? <X size={20} /> : <Menu size={20} />}
-              </button>
-            </div>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        {open && (
-          <div className="md:hidden border-t border-slate-800 bg-slate-900">
-            <div className="px-4 pt-4 pb-6 space-y-2">
-              {publicLinks.map(({ href, label, icon }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                    isActive(href)
-                      ? "bg-slate-800 text-white"
-                      : "hover:text-amber-400"
-                  }`}
-                >
-                  {icon}
-                  <span className="text-sm font-medium">{label}</span>
-                </Link>
-              ))}
-
-              {dashboardLinks.length > 0 && (
-                <div className="mt-2 border-t border-slate-800 pt-3 space-y-1">
-                  {dashboardLinks.map(({ href, label, icon }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                        isActive(href)
-                          ? "bg-slate-800 text-white"
-                          : "hover:text-amber-400"
-                      }`}
-                    >
-                      {icon}
-                      <span className="text-sm font-medium">{label}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-
-              <div className="mt-3 flex space-x-2">
-                {session ? (
-                  <button
-                    onClick={() => {
-                      signOut({ callbackUrl: "/login" });
-                      setOpen(false);
-                    }}
-                    className="flex-1 flex items-center gap-2 justify-center px-3 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white text-sm font-medium"
-                  >
-                    <LogOut size={16} />
-                    Logout
-                  </button>
-                ) : (
-                  <LoginButton />
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </nav>
     </header>
   );
 };
-
-export default Navbar;

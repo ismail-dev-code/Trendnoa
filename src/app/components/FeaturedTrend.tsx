@@ -4,13 +4,14 @@ import React, { useEffect } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { ShoppingCart, Tag } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 interface TrendItem {
   id: number;
   name: string;
   category: string;
   price: number;
-  discountPrice?: number; 
+  discountPrice?: number;
   description?: string;
   imageUrl: string;
 }
@@ -71,6 +72,8 @@ const FeaturedTrend: React.FC<FeaturedTrendProps> = ({
     AOS.init({ duration: 1000, once: true });
   }, []);
 
+  const { addToCart } = useCart();
+
   return (
     <section className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6 my-6">
       <header className="mb-6 text-center sm:text-left">
@@ -103,25 +106,41 @@ const FeaturedTrend: React.FC<FeaturedTrendProps> = ({
                 {trend.description}
               </p>
             )}
+
+            {/* Price + Add to Cart */}
             <div className="flex items-center justify-between mt-auto">
               <div className="flex items-center gap-2">
-                <Tag className=" text-gray-800 dark:text-gray-100" />
+                <Tag className="text-gray-800 dark:text-gray-100" />
                 {trend.discountPrice ? (
                   <div className="flex items-baseline gap-2">
-                    <span className="text-gray-400 text-nowrap dark:text-gray-500 line-through">
+                    <span className="text-gray-400 line-through dark:text-gray-500">
                       {trend.price}৳
                     </span>
-                    <span className="text-gray-800 mr-3 dark:text-gray-100 ">
+                    <span className="text-gray-800 dark:text-gray-100">
                       {trend.discountPrice}৳
                     </span>
                   </div>
                 ) : (
-                  <span className="text-gray-800 text-nowrap  dark:text-gray-100 ">
-                    {trend.price} ৳
+                  <span className="text-gray-800 dark:text-gray-100">
+                    {trend.price}৳
                   </span>
                 )}
               </div>
-              <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs text-nowrap cursor-pointer px-3 py-1 rounded-md transition">
+
+              {/* Add to Cart Button */}
+              <button
+                onClick={() =>
+                  addToCart({
+                    id: trend.id,
+                    name: trend.name,
+                    price: trend.price,
+                    discountPrice: trend.discountPrice,
+                    imageUrl: trend.imageUrl,
+                    quantity: 1,
+                  })
+                }
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-md transition"
+              >
                 <ShoppingCart className="w-4 h-4" />
                 Add to Cart
               </button>

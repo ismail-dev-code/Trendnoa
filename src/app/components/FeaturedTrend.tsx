@@ -139,7 +139,7 @@ const FeaturedTrend: React.FC<FeaturedTrendProps> = ({
                     quantity: 1,
                   })
                 }
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-md transition"
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white text-xs px-3 py-1 rounded-md transition"
               >
                 <ShoppingCart className="w-4 h-4" />
                 Add to Cart

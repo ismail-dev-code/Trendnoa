@@ -5,6 +5,7 @@ import FeaturedTrend from "./components/FeaturedTrend";
 import ClientLayout from "./components/ClientLayout";
 import NavBar from "./components/NavBar";
 import NewYearOffers from "./components/NewYearOffers";
+import TopCategories from "./components/TopCategories";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
 
         <FeaturedTrend />
         <NewYearOffers/>
+        <TopCategories/>
         <WhyTrendnoa />
 
         <Footer />

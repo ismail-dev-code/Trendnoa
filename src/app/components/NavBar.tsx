@@ -1,49 +1,77 @@
 "use client";
-import { LogOut, ShoppingCart, Trash, Menu, X } from "lucide-react";
+
+import { LogOut, ShoppingCart, Trash, Menu, X, Search } from "lucide-react";
 import { useState } from "react";
 import LoginButton from "./LoginButton";
 import { signOut, useSession } from "next-auth/react";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
 
+const categories = [
+  "Electronics",
+  "Fashion",
+  "Home & Living",
+  "Groceries",
+  "Health & Beauty",
+  "Sports",
+];
+
 const NavBar: React.FC = () => {
   const { cart, totalItems, totalPrice, removeFromCart, clearCart } = useCart();
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // get session from NextAuth
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-slate-900 text-slate-300 shadow-md border-b border-slate-800">
+    <header className="sticky top-0 z-50 w-full bg-white text-gray-800 shadow-md border-b">
+      {/* Top Bar */}
+      <div className="hidden md:flex justify-between items-center text-xs bg-gray-100 px-6 py-2">
+        <div className="flex gap-4">
+          <Link href="/help" className="hover:text-amber-500">Help Center</Link>
+          <Link href="/track" className="hover:text-amber-500">Track Order</Link>
+        </div>
+        <div className="flex gap-4">
+          <span className="hover:text-amber-500 cursor-pointer">English</span>
+          <span className="hover:text-amber-500 cursor-pointer">৳ BDT</span>
+        </div>
+      </div>
+
+      {/* Main Nav */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <Link
-              href="/"
-              className="text-amber-500 font-bold text-xl tracking-wide hover:text-amber-400"
-            >
-              Trendnoa
-            </Link>
+          <Link href="/" className="text-amber-500 font-bold text-xl tracking-wide hover:text-amber-600">
+            Trendnoa
+          </Link>
+
+          {/* Search Bar */}
+          <div className="hidden md:flex flex-1 mx-8">
+            <div className="flex w-full max-w-2xl border rounded-lg overflow-hidden">
+              <select className="text-sm bg-gray-100 px-2 border-r outline-none">
+                <option>All</option>
+                {categories.map((cat, i) => (
+                  <option key={i}>{cat}</option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="Search in Trendnoa..."
+                className="flex-1 px-3 py-2 text-sm outline-none"
+              />
+              <button className="bg-amber-500 px-4 flex items-center justify-center hover:bg-amber-600 text-white">
+                <Search size={18} />
+              </button>
+            </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-6 text-sm font-medium">
-            <Link href="/" className="hover:text-amber-500 transition">Home</Link>
-            <Link href="/shop" className="hover:text-amber-500 transition">Shop</Link>
-            <Link href="/about" className="hover:text-amber-500 transition">About</Link>
-            <Link href="/contact" className="hover:text-amber-500 transition">Contact</Link>
-          </div>
-
-          {/* Right Section: Cart + Auth + Mobile Toggle */}
+          {/* Right Section */}
           <div className="flex items-center space-x-4">
-            {/* Cart Icon */}
+            {/* Cart */}
             <div className="relative">
               <button
                 onClick={() => setCartOpen((v) => !v)}
-                className="relative p-2 cursor-pointer rounded-md hover:bg-slate-800"
+                className="relative p-2 cursor-pointer rounded-md hover:bg-gray-100"
               >
                 <ShoppingCart size={20} />
                 {totalItems > 0 && (
@@ -55,22 +83,15 @@ const NavBar: React.FC = () => {
 
               {/* Cart Dropdown */}
               {cartOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-white text-slate-800 rounded-lg shadow-lg border p-3 z-50">
+                <div className="absolute right-0 mt-2 w-80 bg-white text-gray-800 rounded-lg shadow-lg border p-3 z-50">
                   {cart.length === 0 ? (
                     <p className="text-sm text-gray-600">Your cart is empty.</p>
                   ) : (
                     <div className="space-y-3">
                       {cart.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center justify-between border-b pb-2"
-                        >
+                        <div key={item.id} className="flex items-center justify-between border-b pb-2">
                           <div className="flex items-center gap-2">
-                            <img
-                              src={item.imageUrl}
-                              alt={item.name}
-                              className="w-10 h-10 object-cover rounded"
-                            />
+                            <img src={item.imageUrl} alt={item.name} className="w-10 h-10 object-cover rounded" />
                             <div>
                               <p className="text-sm font-semibold">{item.name}</p>
                               <p className="text-xs text-gray-500">
@@ -109,7 +130,7 @@ const NavBar: React.FC = () => {
               )}
             </div>
 
-            {/* Auth buttons (hidden on xs, show on md+) */}
+            {/* Auth */}
             <div className="hidden sm:block">
               {session ? (
                 <button
@@ -123,10 +144,10 @@ const NavBar: React.FC = () => {
               )}
             </div>
 
-            {/* Mobile Menu Toggle (hamburger) */}
+            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}
-              className="md:hidden p-2 rounded-md hover:bg-slate-800"
+              className="md:hidden p-2 rounded-md hover:bg-gray-100"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -134,16 +155,27 @@ const NavBar: React.FC = () => {
         </div>
       </div>
 
+      {/* Category Bar (Desktop Only) */}
+      <div className="hidden md:flex bg-gray-50 border-t border-gray-200 px-6 py-2 space-x-6 text-sm font-medium">
+        {categories.map((cat, i) => (
+          <Link key={i} href={`/category/${cat.toLowerCase()}`} className="hover:text-amber-500">
+            {cat}
+          </Link>
+        ))}
+      </div>
+
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-slate-800 border-t border-slate-700">
+        <div className="md:hidden bg-gray-50 border-t">
           <div className="flex flex-col space-y-2 p-4 text-sm font-medium">
-            <Link href="/" className="hover:text-amber-500 transition">Home</Link>
-            <Link href="/shop" className="hover:text-amber-500 transition">Shop</Link>
-            <Link href="/about" className="hover:text-amber-500 transition">About</Link>
-            <Link href="/contact" className="hover:text-amber-500 transition">Contact</Link>
-
-            {/* Auth button also inside mobile menu */}
+            {categories.map((cat, i) => (
+              <Link key={i} href={`/category/${cat.toLowerCase()}`} className="hover:text-amber-500">
+                {cat}
+              </Link>
+            ))}
+            <Link href="/shop" className="hover:text-amber-500">Shop</Link>
+            <Link href="/about" className="hover:text-amber-500">About</Link>
+            <Link href="/contact" className="hover:text-amber-500">Contact</Link>
             {session ? (
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}

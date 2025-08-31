@@ -77,10 +77,10 @@ const FeaturedTrend: React.FC<FeaturedTrendProps> = ({
   return (
     <section className="bg-white dark:bg-gray-900 shadow-lg rounded-lg p-6 my-6">
       <header className="mb-6 text-center sm:text-left">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">
+        <h2 className="text-3xl text-center font-bold text-gray-800 dark:text-gray-100 mb-1">
           {title}
         </h2>
-        <p className="text-gray-600 dark:text-gray-300">{description}</p>
+        <p className="text-gray-600 text-center dark:text-gray-300">{description}</p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

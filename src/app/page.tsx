@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar";
 import NewYearOffers from "./components/NewYearOffers";
 import TopCategories from "./components/TopCategories";
 import FAQSection from "./components/FAQSection";
+import TrendSection from "./components/TrendSection";
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <TopCategories/>
         <FAQSection/>
         <WhyTrendnoa />
+        <TrendSection/>
 
         <Footer />
       </ClientLayout>

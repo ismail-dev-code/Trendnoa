@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useCart } from "../context/CartContext"; // ✅ cart integration
+import { useCart } from "../context/CartContext"; 
 import { ShoppingCart, BadgePercent } from "lucide-react";
 
 type Offer = {
@@ -134,7 +134,7 @@ export default function NewYearOffers() {
               }
               className="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white cursor-pointer flex items-center justify-center gap-2 text-sm font-medium py-2 px-4 rounded-xl transition"
             >
-              <ShoppingCart size={16} /> Shop Now
+              <ShoppingCart size={16} /> Add to Cart
             </button>
           </div>
         ))}
